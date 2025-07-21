@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">trabalhoNRainhas</string>
+    <string-array name="board_sizes">
+        <item>4x4</item>
+        <item>5x5</item>
+        <item>6x6</item>
+        <item>7x7</item>
+        <item>8x8</item>
+    </string-array>
+</resources>
