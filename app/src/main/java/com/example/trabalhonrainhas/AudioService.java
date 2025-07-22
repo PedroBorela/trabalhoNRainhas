@@ -56,15 +56,19 @@ public class AudioService extends Service {
     }
 
     private void pause(){
-        mp.pause();
-        posicao = mp.getCurrentPosition();
+        if (mp != null && mp.isPlaying()) {
+            mp.pause();
+            posicao = mp.getCurrentPosition();
+        }
     }
 
     private void stop(){
-        mp.stop();
-        mp.release();
-        mp = null;
-        stopSelf();
+        if (mp != null) {
+            mp.stop();
+            mp.release();
+            mp = null;
+            stopSelf();
+        }
     }
 
     @Nullable

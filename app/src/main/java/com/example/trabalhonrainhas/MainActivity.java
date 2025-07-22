@@ -1,12 +1,16 @@
 package com.example.trabalhonrainhas;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -21,50 +25,44 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
+
     private TabuleiroRainhas jogo;
 
     private GridLayout gradeTabuleiro;
     private TextView textoMensagem;
-    private Spinner seletorTamanho;
     private Button botaoReiniciar;
+
+    private ImageButton botaoConfig;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+
+
+
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        //Inicia a música
-        Intent it = new Intent(MainActivity.this, AudioService.class);
-        it.setAction("PLAY");
-        startService(it);
-
-
-
 
 
 
         jogo = new TabuleiroRainhas(4);
 
+
+
+
+
         gradeTabuleiro = findViewById(R.id.boardGrid);
         textoMensagem = findViewById(R.id.messageText);
-        seletorTamanho = findViewById(R.id.boardSizeSpinner);
         botaoReiniciar = findViewById(R.id.resetButton);
+        botaoConfig = findViewById(R.id.botaoConfig);
 
-        seletorTamanho.setSelection(0); // Posição para "4x4"
-        seletorTamanho.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                jogo.reiniciar(4 + pos);
-                desenharTabuleiro();
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
+
 
         botaoReiniciar.setOnClickListener(v -> {
             jogo.reiniciar(jogo.getTamanho());
@@ -72,7 +70,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         desenharTabuleiro();
+
+        botaoConfig.setOnClickListener(v ->{
+            Intent intencao = new Intent(MainActivity.this,ConfigActivity.class);
+            startActivity(intencao);
+
+        });
     }
+
+
 
     private void desenharTabuleiro() {
         gradeTabuleiro.removeAllViews();
@@ -80,14 +86,18 @@ public class MainActivity extends AppCompatActivity {
         gradeTabuleiro.setRowCount(jogo.getTamanho());
 
         int screenWidth = getResources().getDisplayMetrics().widthPixels;
-        int cellSize = screenWidth / jogo.getTamanho();
+        int screenHeight = getResources().getDisplayMetrics().heightPixels;
+        int dimensaoCelula = Math.min(screenHeight,screenWidth);
+        int tamanhoCelula = (dimensaoCelula - 100) / jogo.getTamanho();
 
+        if(screenHeight < screenWidth)
+            tamanhoCelula = (dimensaoCelula-300) / jogo.getTamanho();
         for (int linha = 0; linha < jogo.getTamanho(); linha++) {
             for (int coluna = 0; coluna < jogo.getTamanho(); coluna++) {
                 Button celula = new Button(this);
                 celula.setLayoutParams(new GridLayout.LayoutParams());
-                celula.getLayoutParams().width = cellSize;
-                celula.getLayoutParams().height = cellSize;
+                celula.getLayoutParams().width = tamanhoCelula;
+                celula.getLayoutParams().height = tamanhoCelula;
                 celula.setPadding(0, 0, 0, 0);
 
                 // Define a cor de fundo (estilo xadrez)
@@ -138,9 +148,25 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        SharedPreferences prefs = getSharedPreferences("config_nrainhas", MODE_PRIVATE);
+        boolean musicaAtiva = prefs.getBoolean("musica_ativa", true);
+        int tamanho = prefs.getInt("tamanho_tabuleiro", 4);
+
+        if (jogo.getTamanho() != tamanho) {
+            jogo.reiniciar(tamanho);
+            desenharTabuleiro();
+        }
+
         Intent it = new Intent(MainActivity.this, AudioService.class);
-        it.setAction("PLAY");
-        startService(it);
+
+        if (musicaAtiva){
+            it.setAction("PLAY");
+            startService(it);
+        } else {
+            it.setAction("PAUSE");
+            startService(it);
+        }
+
         super.onResume();
     }
 
