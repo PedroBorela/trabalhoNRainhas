@@ -59,10 +59,8 @@ public class AudioService extends Service {
     private int estadoMusica(){
             if(mp!=null && mp.isPlaying())
                 return mp.getCurrentPosition();
-
             return 0;
     }
-
     private void stop(){
         if (mp != null) {
             posicao = mp.getCurrentPosition();
@@ -71,8 +69,6 @@ public class AudioService extends Service {
             mp = null;
             stopSelf();
         }
-
-
     }
 
     @Nullable

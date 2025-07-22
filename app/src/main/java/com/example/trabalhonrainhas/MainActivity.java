@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
             ArrayList<Integer> linhasRainhas = new ArrayList<>();
             ArrayList<Integer> colunasRainhas = new ArrayList<>();
             int tamanho = jogo.getTamanho();
-            // Percorre o tabuleiro e adiciona as coordenadas de cada rainha às listas
+            // Percorre o tabuleiro e adiciona as coordenadas de cada rainha
             for (int linha = 0; linha < tamanho; linha++) {
                 for (int coluna = 0; coluna < tamanho; coluna++) {
                     if (jogo.possuiRainha(linha, coluna)) {
@@ -98,8 +98,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-
-            // Salva as duas listas e o tamanho no Bundle
             outState.putIntegerArrayList("linhasRainhas", linhasRainhas);
             outState.putIntegerArrayList("colunasRainhas", colunasRainhas);
             outState.putInt("tamanhoTabuleiro", jogo.getTamanho());
@@ -127,10 +125,10 @@ public class MainActivity extends AppCompatActivity {
                 celula.setLayoutParams(new GridLayout.LayoutParams());
                 celula.getLayoutParams().width = tamanhoCelula;
                 celula.getLayoutParams().height = tamanhoCelula;
-                celula.setPadding(8, 8, 8, 8); // Adiciona um preenchimento para a imagem respirar
-                celula.setScaleType(ImageButton.ScaleType.FIT_CENTER); // Ajusta a imagem ao centro
+                celula.setPadding(8, 8, 8, 8);
+                celula.setScaleType(ImageButton.ScaleType.FIT_CENTER);
 
-                // Define a cor de fundo (estilo xadrez)
+                // Define a cor de fundo estilo xadrez
                 if ((linha + coluna) % 2 == 0) {
                     celula.setBackgroundColor(Color.parseColor("#FFF8E1"));
                 } else {

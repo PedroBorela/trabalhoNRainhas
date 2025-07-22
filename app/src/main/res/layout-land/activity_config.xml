@@ -26,16 +26,16 @@
     <!-- Seção de Música -->
     <TextView
         android:id="@+id/musicLabelTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="476dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="40dp"
         android:text="Música de Fundo"
-        android:textSize="18sp"
         android:textColor="@color/black"
-        app:layout_constraintTop_toBottomOf="@id/titleTextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/switchMusica"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@id/switchMusica"
-        android:layout_marginTop="40dp"/>
+        app:layout_constraintEnd_toStartOf="@+id/switchMusica"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleTextView" />
 
     <!-- Divisor Visual -->
 
@@ -44,11 +44,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="52dp"
+        android:layout_marginEnd="132dp"
         android:layout_marginBottom="33dp"
         android:checked="true"
         app:layout_constraintBottom_toTopOf="@+id/divisor"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <View
         android:id="@+id/divisor"
@@ -62,25 +64,28 @@
 
 
     <!-- Seção de Tamanho do Tabuleiro -->
+
     <TextView
         android:id="@+id/boardSizeLabelTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="144dp"
+        android:layout_marginTop="20dp"
         android:text="Tamanho do Tabuleiro"
-        android:textSize="18sp"
         android:textColor="@color/black"
-        app:layout_constraintTop_toBottomOf="@id/divisor"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="24dp"/>
+        app:layout_constraintTop_toBottomOf="@id/divisor" />
 
     <Spinner
         android:id="@+id/seletorTamanho"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="421dp"
+        android:layout_height="47dp"
         android:layout_marginTop="8dp"
         android:entries="@array/board_sizes"
         android:padding="12dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.432"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/boardSizeLabelTextView" />
 
@@ -88,10 +93,10 @@
         android:id="@+id/botaoSalvar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="16dp"
         android:text="Salvar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.207"
+        app:layout_constraintHorizontal_bias="0.299"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/seletorTamanho" />
 
@@ -100,10 +105,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="55dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="16dp"
         android:text="voltar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.068"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/botaoSalvar"
         app:layout_constraintTop_toBottomOf="@+id/seletorTamanho" />
 
