@@ -20,21 +20,15 @@ public class AudioService extends Service {
                 case "PLAY":
                     play();
                     break;
-
                 case "PAUSE":
                     pause();
                     break;
-
                 case "STOP":
                     stop();
                     break;
             }
-
-
             return Service.START_NOT_STICKY;
         }
-
-
 
     private void play(){
         Runnable runnable = new Runnable() {
@@ -62,13 +56,23 @@ public class AudioService extends Service {
         }
     }
 
+    private int estadoMusica(){
+            if(mp!=null && mp.isPlaying())
+                return mp.getCurrentPosition();
+
+            return 0;
+    }
+
     private void stop(){
         if (mp != null) {
+            posicao = mp.getCurrentPosition();
             mp.stop();
             mp.release();
             mp = null;
             stopSelf();
         }
+
+
     }
 
     @Nullable

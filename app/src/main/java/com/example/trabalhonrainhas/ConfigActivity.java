@@ -51,12 +51,8 @@ public class ConfigActivity extends AppCompatActivity {
 
          musicaAtiva = prefs.getBoolean("musica_ativa", true);
         switchMusica.setChecked(musicaAtiva);
-        switchMusica.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                musicaAtiva = isChecked;
-            }
-        });
+        switchMusica.setOnCheckedChangeListener((buttonView, isChecked) ->
+                musicaAtiva = isChecked);
 
 
         if(tamanhoSelecionado >= 4){

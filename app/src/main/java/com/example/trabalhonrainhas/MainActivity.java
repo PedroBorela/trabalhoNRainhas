@@ -27,20 +27,17 @@ import java.util.Set;
 public class MainActivity extends AppCompatActivity {
 
     private TabuleiroRainhas jogo;
-
     private GridLayout gradeTabuleiro;
     private TextView textoMensagem;
     private Button botaoReiniciar;
-
     private ImageButton botaoConfig;
+    private  int posicaoMusica;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-
-
-
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -49,19 +46,27 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-
-        jogo = new TabuleiroRainhas(4);
-
-
-
-
+        if (savedInstanceState != null) {
+            int tamanho = savedInstanceState.getInt("tamanhoTabuleiro");
+            ArrayList<Integer> linhasRainhas = savedInstanceState.getIntegerArrayList("linhasRainhas");
+            ArrayList<Integer> colunasRainhas = savedInstanceState.getIntegerArrayList("colunasRainhas");
+            jogo = new TabuleiroRainhas(tamanho);
+            if (linhasRainhas != null && colunasRainhas != null && linhasRainhas.size() == colunasRainhas.size()) {
+                for (int i = 0; i < linhasRainhas.size(); i++) {
+                    int linha = linhasRainhas.get(i);
+                    int coluna = colunasRainhas.get(i);
+                    jogo.alternarRainha(linha, coluna);
+                }
+            }
+        } else {
+            // Se for a primeira vez, inicializa o jogo com um valor padrão.
+            jogo = new TabuleiroRainhas(4);
+        }
 
         gradeTabuleiro = findViewById(R.id.boardGrid);
         textoMensagem = findViewById(R.id.messageText);
         botaoReiniciar = findViewById(R.id.resetButton);
         botaoConfig = findViewById(R.id.botaoConfig);
-
 
 
         botaoReiniciar.setOnClickListener(v -> {
@@ -78,27 +83,52 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        if(jogo!=null){
+            ArrayList<Integer> linhasRainhas = new ArrayList<>();
+            ArrayList<Integer> colunasRainhas = new ArrayList<>();
+            int tamanho = jogo.getTamanho();
+            // Percorre o tabuleiro e adiciona as coordenadas de cada rainha às listas
+            for (int linha = 0; linha < tamanho; linha++) {
+                for (int coluna = 0; coluna < tamanho; coluna++) {
+                    if (jogo.possuiRainha(linha, coluna)) {
+                        linhasRainhas.add(linha);
+                        colunasRainhas.add(coluna);
+                    }
+                }
+            }
+
+            // Salva as duas listas e o tamanho no Bundle
+            outState.putIntegerArrayList("linhasRainhas", linhasRainhas);
+            outState.putIntegerArrayList("colunasRainhas", colunasRainhas);
+            outState.putInt("tamanhoTabuleiro", jogo.getTamanho());
+        }
 
 
+    }
     private void desenharTabuleiro() {
+        if (jogo == null) return;
         gradeTabuleiro.removeAllViews();
         gradeTabuleiro.setColumnCount(jogo.getTamanho());
         gradeTabuleiro.setRowCount(jogo.getTamanho());
 
         int screenWidth = getResources().getDisplayMetrics().widthPixels;
         int screenHeight = getResources().getDisplayMetrics().heightPixels;
-        int dimensaoCelula = Math.min(screenHeight,screenWidth);
+        int dimensaoCelula = Math.min(screenHeight, screenWidth);
         int tamanhoCelula = (dimensaoCelula - 100) / jogo.getTamanho();
 
-        if(screenHeight < screenWidth)
-            tamanhoCelula = (dimensaoCelula-300) / jogo.getTamanho();
+        if (screenHeight < screenWidth)
+            tamanhoCelula = (dimensaoCelula - 300) / jogo.getTamanho();
+
         for (int linha = 0; linha < jogo.getTamanho(); linha++) {
             for (int coluna = 0; coluna < jogo.getTamanho(); coluna++) {
-                Button celula = new Button(this);
+                ImageButton celula = new ImageButton(this);
                 celula.setLayoutParams(new GridLayout.LayoutParams());
                 celula.getLayoutParams().width = tamanhoCelula;
                 celula.getLayoutParams().height = tamanhoCelula;
-                celula.setPadding(0, 0, 0, 0);
+                celula.setPadding(8, 8, 8, 8); // Adiciona um preenchimento para a imagem respirar
+                celula.setScaleType(ImageButton.ScaleType.FIT_CENTER); // Ajusta a imagem ao centro
 
                 // Define a cor de fundo (estilo xadrez)
                 if ((linha + coluna) % 2 == 0) {
@@ -107,16 +137,16 @@ public class MainActivity extends AppCompatActivity {
                     celula.setBackgroundColor(Color.parseColor("#FFE082"));
                 }
 
-                // Verifica se tem uma rainha e se ela está em conflito
                 if (jogo.possuiRainha(linha, coluna)) {
-                    celula.setText("♛");
-                    celula.setTextSize(24);
                     if (jogo.temConflito(linha, coluna)) {
-                        celula.setTextColor(Color.RED);
-                        celula.setBackgroundColor(Color.parseColor("#FFCDD2")); // Fundo vermelho claro
+                        celula.setImageResource(R.drawable.rainha_em_conflito);
+                        celula.setBackgroundColor(Color.parseColor("#FFCDD2"));
                     } else {
-                        celula.setTextColor(Color.parseColor("#6D28D9")); // Roxo
+                        // Usa uma imagem para rainha válida
+                        celula.setImageResource(R.drawable.rainha);
                     }
+                } else {
+                    celula.setImageResource(android.R.color.transparent);
                 }
 
                 final int finalLinha = linha;
@@ -154,8 +184,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (jogo.getTamanho() != tamanho) {
             jogo.reiniciar(tamanho);
-            desenharTabuleiro();
         }
+        desenharTabuleiro();
 
         Intent it = new Intent(MainActivity.this, AudioService.class);
 
@@ -181,10 +211,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         Intent it = new Intent(MainActivity.this, AudioService.class);
-        it.setAction("STOP");
+        it.setAction("PAUSE");
         startService(it);
         super.onDestroy();
     }
+
+
 
 
 
