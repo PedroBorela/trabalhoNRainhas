@@ -3,13 +3,16 @@ package com.example.trabalhonrainhas;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -19,6 +22,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView textoMensagem;
     private Button botaoReiniciar;
     private ImageButton botaoConfig;
-    private  int posicaoMusica;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void onSaveInstanceState(Bundle outState){
+    public void onSaveInstanceState(@NotNull Bundle outState){
         super.onSaveInstanceState(outState);
         if(jogo!=null){
             ArrayList<Integer> linhasRainhas = new ArrayList<>();
@@ -111,13 +115,19 @@ public class MainActivity extends AppCompatActivity {
         gradeTabuleiro.setColumnCount(jogo.getTamanho());
         gradeTabuleiro.setRowCount(jogo.getTamanho());
 
+        //Point size = new Point();
+        //Display display = getWindowManager().getDefaultDisplay();
+        // display.getSize(size);
+        // int screenWidth = size.x;
+        // int screenHeight = size.y;
+
         int screenWidth = getResources().getDisplayMetrics().widthPixels;
         int screenHeight = getResources().getDisplayMetrics().heightPixels;
-        int dimensaoCelula = Math.min(screenHeight, screenWidth);
-        int tamanhoCelula = (dimensaoCelula - 100) / jogo.getTamanho();
-
+        int dimensaoTela = Math.min(screenHeight, screenWidth);
+        int tamanhoCelula = (dimensaoTela - 100) / jogo.getTamanho();
+        //quando a tela ta deitada
         if (screenHeight < screenWidth)
-            tamanhoCelula = (dimensaoCelula - 300) / jogo.getTamanho();
+            tamanhoCelula = (dimensaoTela - 300) / jogo.getTamanho();
 
         for (int linha = 0; linha < jogo.getTamanho(); linha++) {
             for (int coluna = 0; coluna < jogo.getTamanho(); coluna++) {
@@ -126,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                 celula.getLayoutParams().width = tamanhoCelula;
                 celula.getLayoutParams().height = tamanhoCelula;
                 celula.setPadding(8, 8, 8, 8);
-                celula.setScaleType(ImageButton.ScaleType.FIT_CENTER);
+                celula.setScaleType(ImageButton.ScaleType.FIT_XY);
 
                 // Define a cor de fundo estilo xadrez
                 if ((linha + coluna) % 2 == 0) {
@@ -137,18 +147,22 @@ public class MainActivity extends AppCompatActivity {
 
                 if (jogo.possuiRainha(linha, coluna)) {
                     if (jogo.temConflito(linha, coluna)) {
+                        //fazer animação
+                        celula.setAlpha(0f);
                         celula.setImageResource(R.drawable.rainha_em_conflito);
+
+                        celula.animate().alpha(1f).setDuration(2000);
                         celula.setBackgroundColor(Color.parseColor("#FFCDD2"));
                     } else {
-                        // Usa uma imagem para rainha válida
+                        //Rainha válida
                         celula.setImageResource(R.drawable.rainha);
                     }
                 } else {
                     celula.setImageResource(android.R.color.transparent);
                 }
 
-                final int finalLinha = linha;
-                final int finalColuna = coluna;
+                int finalLinha = linha;
+                int finalColuna = coluna;
                 celula.setOnClickListener(v -> {
                     jogo.alternarRainha(finalLinha, finalColuna);
                     desenharTabuleiro();
@@ -162,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void atualizarMensagem() {
         if (jogo.estaResolvido()) {
-            textoMensagem.setText("🎉 Parabéns! Você resolveu o puzzle!");
+            textoMensagem.setText("🎉 Parabéns! Você resolveu o desafio!");
             textoMensagem.setTextColor(Color.parseColor("#388E3C")); // Verde
         } else if (jogo.temConflitos()) {
             textoMensagem.setText("Conflitos detectados!");
