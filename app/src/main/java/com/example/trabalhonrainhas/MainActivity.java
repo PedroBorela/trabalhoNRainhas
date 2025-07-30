@@ -140,9 +140,9 @@ public class MainActivity extends AppCompatActivity {
 
                 // Define a cor de fundo estilo xadrez
                 if ((linha + coluna) % 2 == 0) {
-                    celula.setBackgroundColor(Color.parseColor("#FFF8E1"));
+                    celula.setBackgroundColor(Color.parseColor("#EFF4DE"));
                 } else {
-                    celula.setBackgroundColor(Color.parseColor("#FFE082"));
+                    celula.setBackgroundColor(Color.parseColor("#C5D298"));
                 }
 
                 if (jogo.possuiRainha(linha, coluna)) {
