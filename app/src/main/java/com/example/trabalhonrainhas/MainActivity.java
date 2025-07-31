@@ -18,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -36,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView textoMensagem;
     private Button botaoReiniciar;
     private ImageButton botaoConfig;
+    final int TAMANHO_MIN = 4;
+    final int TAMANHO_MAX = 8;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +111,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+
     }
+
     private void desenharTabuleiro() {
         if (jogo == null) return;
         gradeTabuleiro.removeAllViews();
@@ -149,13 +154,16 @@ public class MainActivity extends AppCompatActivity {
                     if (jogo.temConflito(linha, coluna)) {
                         //fazer animação
                         celula.setAlpha(0f);
-                        celula.setImageResource(R.drawable.rainha_em_conflito);
+                        celula.setImageResource(R.drawable.rainha_conflito);
 
                         celula.animate().alpha(1f).setDuration(2000);
                         celula.setBackgroundColor(Color.parseColor("#FFCDD2"));
                     } else {
                         //Rainha válida
+                        celula.setAlpha(0f);
                         celula.setImageResource(R.drawable.rainha);
+                        celula.animate().alpha(1f).setDuration(1000);
+
                     }
                 } else {
                     celula.setImageResource(android.R.color.transparent);
@@ -178,6 +186,27 @@ public class MainActivity extends AppCompatActivity {
         if (jogo.estaResolvido()) {
             textoMensagem.setText("🎉 Parabéns! Você resolveu o desafio!");
             textoMensagem.setTextColor(Color.parseColor("#388E3C")); // Verde
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Parabéns!")
+                    .setMessage("Você venceu! Deseja avançar para o próximo nível?")
+                    .setPositiveButton("Sim", (dialog, which) -> {
+                SharedPreferences prefs = getSharedPreferences("config_nrainhas", MODE_PRIVATE);
+                int tamanhoAtual = jogo.getTamanho();
+                int proximoTamanho = (tamanhoAtual >= TAMANHO_MAX) ? TAMANHO_MIN : tamanhoAtual + 1;
+
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putInt("tamanho_tabuleiro", proximoTamanho);
+                editor.apply();
+
+                jogo.reiniciar(proximoTamanho);
+                desenharTabuleiro();
+            })
+                    .setNegativeButton("Não", (dialog, which) -> {
+                jogo.reiniciar(jogo.getTamanho());
+                desenharTabuleiro();
+            })
+                    .setCancelable(false).show();
         } else if (jogo.temConflitos()) {
             textoMensagem.setText("Conflitos detectados!");
             textoMensagem.setTextColor(Color.RED);
@@ -210,6 +239,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         super.onResume();
+
     }
 
     @Override
@@ -218,6 +248,14 @@ public class MainActivity extends AppCompatActivity {
         it.setAction("PAUSE");
         startService(it);
         super.onPause();
+
+        //new android.app.AlertDialog.Builder(this)
+        //        .setTitle("Deseja sair?")
+      //          .setMessage("Você realmente deseja sair?")
+        //        .setPositiveButton("Sim", (dialog, which) -> {
+       //             finish();
+         //       })
+          //      .setNegativeButton("não",null).show();
     }
 
     @Override

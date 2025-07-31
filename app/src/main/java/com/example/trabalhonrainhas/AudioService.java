@@ -35,7 +35,7 @@ public class AudioService extends Service {
             @Override
             public void run() {
                 if (mp == null){
-                    mp = MediaPlayer.create(getApplicationContext(), R.raw.music);
+                    mp = MediaPlayer.create(getApplicationContext(), R.raw.musicajogo);
                     mp.setLooping(true);
 
                 } else if (!mp.isPlaying()){

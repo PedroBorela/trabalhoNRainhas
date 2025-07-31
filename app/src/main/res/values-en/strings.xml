@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NQueens</string>
+
+
+    <string name="titulo_configuracoes">Settings</string>
+    <string name="musica_de_fundo">Background Music</string>
+    <string name="tamanho_tabuleiro">Board Size</string>
+    <string name="botao_salvar">Save</string>
+    <string name="botao_voltar">Back</string>
+    <string name="botao_resetar">Reset Board</string>
+    <string name="titulo_jogo">N Queens Game</string>
+
+
+    <string name="alerta_titulo">Congratulations!</string>
+    <string name="alerta_mensagem">You won! Do you want to go to the next level?</string>
+    <string name="botao_sim">Yes</string>
+    <string name="botao_nao">No</string>
+
+
+    <string name="mensagem_conflito">There are queens in conflict!</string>
+    <string name="mensagem_vitoria">Congratulations, you solved the challenge!</string>
+    <string name="mensagem_padrao">Put/remove queens by touching on the cells.</string>
+
+
+    <string-array name="tamanhos_tabuleiro">
+        <item>4x4</item>
+        <item>5x5</item>
+        <item>6x6</item>
+        <item>7x7</item>
+        <item>8x8</item>
+    </string-array>
+
+</resources>

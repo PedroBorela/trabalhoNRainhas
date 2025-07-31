@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
@@ -54,7 +55,8 @@ public class ConfigActivity extends AppCompatActivity {
         switchMusica.setOnCheckedChangeListener((buttonView, isChecked) ->
                 musicaAtiva = isChecked);
 
-
+        ArrayAdapter<String> adaptador = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, getResources().getStringArray(R.array.tamanhos_tabuleiro));
+        seletorTamanho.setAdapter(adaptador);
         if(tamanhoSelecionado >= 4){
             seletorTamanho.setSelection(tamanhoSelecionado-4);
         }
